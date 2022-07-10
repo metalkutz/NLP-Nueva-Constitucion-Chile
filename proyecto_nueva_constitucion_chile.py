@@ -13,8 +13,6 @@ b) que al introducir un articulo indique el ámbito de la comisión al cual pert
 # %%
 import pandas as pd
 import numpy as np
-from sklearn.feature_extraction.text import CountVectorizer
-from sklearn.feature_extraction.text import TfidfTransformer, TfidfCountVectorizer
 
 import re
 from wordcloud import WordCloud
@@ -33,9 +31,10 @@ archivo viene en 3 formatos pdf, json, csv
 data = pd.read_csv(r'.\constitucion\normas_aprobadas_2022.06.30_11.16.csv')
 data.info() # 7 columnas con los títulos de los articulos, comisión a la que pertenece,
 # separamos el numero de la columna comision
-data[['n_comision','nom_comision']] = data['Comisión'].str.split('-',expand=True)
+data[['n_comision','nom_comision']] = data['Comisión'].str.split('-',expand=True) # separo el nombre de la comisión y su número en columnas distintas
 data.head()
 data.drop(['Comisión'], axis=1, inplace=True)
+data.head()
 # %%
 #juntamos los articulos en 1 solo texto no sé porque XD
 texto = data.Texto.sum()
@@ -132,6 +131,9 @@ fig, ax = plt.subplots(figsize=(10,10))
 ax.imshow(texto_const_wc)
 ax.axis('off')
 plt.show()
+# %%
+from sklearn.feature_extraction.text import CountVectorizer
+from sklearn.feature_extraction.text import TfidfTransformer, TfidfCountVectorizer
 
 # %%
 'armamos el bag of words'
