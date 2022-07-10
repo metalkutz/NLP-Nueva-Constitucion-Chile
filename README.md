@@ -27,3 +27,5 @@ Se analizará el texto desde un punto de vista exploratorio cuantitativo. Sólo 
 - frecuencia de palabras
 - bag of words de cada articulo
 - td-idf  
+
+![image](https://github.com/metalkutz/NPL-Nueva-Constitucion-Chile/blob/8d92f38790e0814525df213a6d37c6dc9ca98a22/constitucion/logo%20portada.png)
