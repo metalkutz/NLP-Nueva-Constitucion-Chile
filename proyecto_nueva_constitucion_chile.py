@@ -132,21 +132,21 @@ ax.imshow(texto_const_wc)
 ax.axis('off')
 plt.show()
 # %%
-import sklearn.feature_extraction.text as txt
-# from sklearn.feature_extraction.text import CountVectorizer
-# from sklearn.feature_extraction.text import TfidfTransformer, TfidfCountVectorizer
+# import sklearn.feature_extraction.text as txt
+from sklearn.feature_extraction.text import CountVectorizer
+from sklearn.feature_extraction.text import TfidfTransformer, TfidfVectorizer
 
 # %%
 'armamos el bag of words'
 #convertimos en frase la lista de tokens para generar el vector
 data['Texto_frase_limpia'] = data["Texto_tk_limpio"].apply(lambda x: ' '.join(x)).values
-count = txt.CountVectorizer()
+count = CountVectorizer()
 array=data["Texto_frase_limpia"]
 bag = count.fit_transform(array)
 
-tfidf = txt.TfidfTransformer()
+tfidf = TfidfTransformer()
 np.set_printoptions(precision=2)
 print(tfidf.fit_transform(bag).toarray().shape)
 # %%
-txt.TfidfCountVectorizer()
+TfidfVectorizer()
 # %%
