@@ -1,6 +1,6 @@
 # Análisis de la propuesta para la nueva Constitución de Chile
 ## Objetivo
-El objetivo de este ejercicio es meramente exploratorio de los contenidos y temas tratados dentro del texto propuesto para la nueva Constitución de Chile. Se utilizan técnicas de análisis de NPL, utilizando librerias relacionadas. 
+El objetivo de este ejercicio es meramente exploratorio de los contenidos y temas tratados dentro del texto propuesto para la nueva Constitución de Chile. Se utilizan técnicas de análisis de NLP, utilizando librerias relacionadas. 
 
 ## Librerias utilizadas
 - re
