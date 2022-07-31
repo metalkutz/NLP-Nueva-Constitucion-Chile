@@ -29,3 +29,5 @@ Se analizará el texto desde un punto de vista exploratorio cuantitativo. Sólo 
 - td-idf  
 
 ![image](https://github.com/metalkutz/NPL-Nueva-Constitucion-Chile/blob/8d92f38790e0814525df213a6d37c6dc9ca98a22/constitucion/logo%20portada.png)
+
+![image](https://github.com/metalkutz/NLP-Nueva-Constitucion-Chile/blob/ec4573d4718213d0a0a93145f1b8fb970f255579/graficos/wc_com1_derechosfunda.png)
