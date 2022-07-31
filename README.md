@@ -21,12 +21,14 @@ Al inicio del análisis se revisó el borrador del texto de la nueva constituci�
 ## Enfoque análisis
 Se analizará el texto desde un punto de vista exploratorio cuantitativo. Sólo se presentarán resultados en base a los resultados que se encuentren con las distintas técnicas seleccionadas. 
 
+- limpieza y tratamiento de texto (i.e. convertir todo a minúsculas, eliminar tíldes y caracteres especiales, eliminar palabras funcionales, tokenizar palabras)
 - wordcloud de palabras
 - riqueza lexica
 - hapax de términos
 - frecuencia de palabras
 - bag of words de cada articulo
-- td-idf  
+- td-idf
+- cluster sobre texto completo (dbscan, kmeans, aglomerativo)
 
 ![image](https://github.com/metalkutz/NPL-Nueva-Constitucion-Chile/blob/8d92f38790e0814525df213a6d37c6dc9ca98a22/constitucion/logo%20portada.png)
 
