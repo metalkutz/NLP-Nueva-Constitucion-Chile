@@ -30,4 +30,5 @@ Se analizará el texto desde un punto de vista exploratorio cuantitativo. Sólo 
 
 ![image](https://github.com/metalkutz/NPL-Nueva-Constitucion-Chile/blob/8d92f38790e0814525df213a6d37c6dc9ca98a22/constitucion/logo%20portada.png)
 
-![image](https://github.com/metalkutz/NLP-Nueva-Constitucion-Chile/blob/ec4573d4718213d0a0a93145f1b8fb970f255579/graficos/wc_com1_derechosfunda.png)
+## Wordcloud de palabras "stemizadas" en artículos propuestos por la comisión de Derechos Fundamentales 
+![image](https://github.com/metalkutz/NLP-Nueva-Constitucion-Chile/blob/d814b309dfa5d6054534384d6df5bb626e51667b/graficos/wc_com4_derechosfunda.png)
