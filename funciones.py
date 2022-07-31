@@ -65,7 +65,7 @@ def lematizar(lista_tk):
 
 # funcion para remover los stopwords y stemizar palabras tokenizadas dentro de una lista
 def quitar_stopwords(lista_tk):
-    stemmer = PorterStemmer()
+    #stemmer = PorterStemmer()
     tokens_limpios=[]
     for token in lista_tk:
         if token not in sw:
