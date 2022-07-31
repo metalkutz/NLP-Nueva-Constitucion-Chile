@@ -15,6 +15,7 @@ import pandas as pd
 import numpy as np
 
 from funciones import *
+sw.remove('estado')  # removemos la palabra estado de la lista de stopwords
 
 ####### BAG OF WORDS: normalización vector de palabras #######
 from sklearn.feature_extraction.text import  TfidfVectorizer
@@ -37,8 +38,6 @@ from sklearn.neighbors import NearestNeighbors
 from sklearn.metrics import silhouette_score
 from scipy.spatial import distance_matrix 
 from scipy.cluster import hierarchy 
-
-sw.remove('estado')  # removemos la palabra estado de la lista de stopwords
 # %%
 '''datos obtenidos desde sitio web oficial de la convención 
 https://www.chileconvencion.cl/
@@ -50,13 +49,21 @@ data.head()
 # %%
 data.Comisión.unique()
 # %%
-# separamos el numero de la columna comision
+# separamos el numero de la columna comision y cambiamos los tipos de datos
 data[['n_comision','nom_comision']] = data['Comisión'].str.split('-',expand=True) # separo el nombre de la comisión y su número en columnas distintas
-data.head()
 data.drop(['Comisión','Aprobada en'], axis=1, inplace=True)
-data.head()
+data['Nº'] = data['Nº'].astype('string')
+data['n_comision'] = data['n_comision'].astype('int8')
+data['Título'] = data['Título'].astype('string')
+data['Texto'] = data['Texto'].astype('string')
+data['nom_comision'] = data['nom_comision'].astype('category')
+data.info()
 # %%
 '#### Análisis inicial sobre comisiones'
+nom_comisiones = data['nom_comision'].cat.categories.tolist()
+num_comisiones = data['n_comision'].unique()
+dicc_comisiones = dict(zip(num_comisiones, nom_comisiones))
+
 data.groupby(['n_comision']).size()/len(data) # comision 6, 1 y 3 representan el 63% de los articulos
 # %%
 print(data.groupby(['n_comision','nom_comision']).size()/len(data))
@@ -140,7 +147,7 @@ texto_nltk.concordance("ser")
 
 # %%
 # creamos nueva columna sobre datos limpios, ahora sin stopwords
-df1["Texto_tk_sw"] = df1["Texto_limpio_tk"].apply(lambda x: quitar_sw(x))
+df1["Texto_tk_sw"] = df1["Texto_limpio_tk"].apply(lambda x: quitar_sw(x,sw))
 # stemizamos las palabras y guardamos en nueva columna
 df1["Texto_tk_sw_st"] = df1["Texto_tk_sw"].apply(lambda x: stemizar_raiz(x))
 # lematizamos las palabras y guardamos en nueva columna
@@ -355,33 +362,134 @@ df3.groupby(['clase-jerarquico']).size()/len(df3) # gran concentración en 1 clu
 df3.groupby(['clase-kmeans']).size()/len(df3) # gran concentración en 2 clusters 0 y 5 suman 60% de la muestra, resto de clusters se reparte los artículos de forma similar con menos de 10%
 # %%
 '######## analisis kmeans'
+
+'primero eliminamos las palabras con mayor frecuencia'
+sw_extras = ['ley','estado','constitucion','derecho','derechos',
+        'podra','personas','ejercicio','regional','ser',
+        'congreso','debera','republica','presidente']
+sw_st = ['ley','derech','estad','ser','public','constitucion','podr'
+        ,'person','tod','establec','conform','determin','deb','deber','funcion'
+        #,'diput','regional','president','republ','ejercici','organ'
+        #,'form','garantiz','cas','competent','respect','reconoc'
+        ]
+
+df3["Texto_tk_sw2"] = df3["Texto_tk_sw"].apply(lambda x: quitar_sw(x,sw_extras))
+df3["Texto_tk_sw_st2"] = df3["Texto_tk_sw_st"].apply(lambda x: quitar_sw(x,sw_st))
+
 df_kmeans = df3.copy()
 df_kmeans.drop(['Aprobada en','Cantidad de Comentarios','URL','clase-dbscan','clase-jerarquico'], axis=1, inplace=True)
-# %%
-'eliminamos las palabras con mayor frecuencia'
-eliminar_palabras = ['ley','estado','constitución','derecho','derechos','podra','personas','ejercicio']
-eliminar_palabras_st = ['ley','estado','constitución','derecho','derechos','podra','personas','ejercicio']
-sw_clusters = sw.copy()
-sw_clusters.extend(eliminar_palabras) 
-# %%
-# 7 clases 
-clase=0
-df_kmeans0 = df_kmeans[df_kmeans['clase-kmeans']==clase].groupby('n_comision').size()/len(df_kmeans[df_kmeans['clase-kmeans']==clase])
 
-texto_tk_sw = df_kmeans.Texto_tk_sw.sum()
-texto_tk_sw_st = df_kmeans.Texto_tk_sw_st.sum()
-nltk.FreqDist(nltk.Text(texto_tk_sw)).plot(10)
-nltk.FreqDist(nltk.Text(texto_tk_sw_st)).plot(10)
+df_kmeans["Texto_tk_sw2"] = df_kmeans["Texto_tk_sw"].apply(lambda x: quitar_sw(x,sw_extras))
+df_kmeans["Texto_tk_sw_st2"] = df_kmeans["Texto_tk_sw_st"].apply(lambda x: quitar_sw(x,sw_st))
 
-texto_const_st= ''
-for i in texto_tk_sw_st:
-    texto_const_st=texto_const_st+' '+i
-# %%
+texto_clase_sw = df_kmeans['Texto_tk_sw2'].sum()
+texto_clase_sw_st = df_kmeans['Texto_tk_sw_st2'].sum()
+nltk.FreqDist(nltk.Text(texto_clase_sw)).plot(20)
+nltk.FreqDist(nltk.Text(texto_clase_sw_st)).plot(20)
+
+txt_clase_st= ''
+for i in texto_clase_sw_st:
+    txt_clase_st=txt_clase_st+' '+i
+
 'wordcloud de palabras sin stopwords y stemizado'
-texto_const_st_wc = WordCloud(background_color='black', max_words=len(texto_const_st), stopwords=sw)
-texto_const_st_wc.generate(texto_const_st)
+texto_clase_st_wc = WordCloud(background_color='black', max_words=len(txt_clase_st), stopwords=sw_st)
+texto_clase_st_wc.generate(txt_clase_st)
 
 fig, ax = plt.subplots(figsize=(10,10))
-ax.imshow(texto_const_st_wc)
+ax.imshow(texto_clase_st_wc)
 ax.axis('off')
 plt.show()
+# %%
+# 7 clases
+total_kmeans = len(kmeans.cluster_centers_) 
+for i in range(total_kmeans):
+    print('##########-------------##############')
+    print('Clase: ',i)
+    df_kmeans_class = df_kmeans[df_kmeans['clase-kmeans']==i]
+    grupo = df_kmeans_class.groupby('nom_comision').size()/len(df_kmeans_class)
+    print(grupo)
+    #texto_clase_sw = df_kmeans_class['Texto_tk_sw2'].sum()
+    texto_clase_sw_st = df_kmeans_class['Texto_tk_sw_st2'].sum()
+    
+    txt_clase_st= ''
+    for j in texto_clase_sw_st:
+        txt_clase_st=txt_clase_st+' '+j
+    
+    print('-------')
+    tokens = nltk.word_tokenize(txt_clase_st,"spanish")
+    palabras_totales = len(tokens) # calculo el total de palabras del texto
+    palabras_unicas = set(tokens)  # creo objeto set de datos para tener palábras únicas
+    palabras_diferentes = len(palabras_unicas) # calculo el total de palabras diferentes a partir del set de palabras
+    riqueza_lexica = palabras_diferentes/palabras_totales # determino la riqueza léxica
+    print('palabras totales:',palabras_totales,'\n palabras diferentes:',
+        palabras_diferentes,'\n riqueza lexica:',riqueza_lexica)
+    print('-------')
+    #nltk.FreqDist(nltk.Text(texto_clase_sw)).plot(20)
+    print('Distribución palabras con mayor frecuencia clase: ',i)
+    texto_nltk_st2 = nltk.Text(texto_clase_sw_st)
+    distribucion = nltk.FreqDist(texto_nltk_st2)
+    distribucion.plot(20)
+    print('-------')
+    print('hapax de la clase: ',i) 
+    hapaxes = distribucion.hapaxes() # buscamos los hapaxses sobre el objeto nltk de distribución de palabras 
+    for hapax in hapaxes: 
+        print(hapax)
+    print('total palabras hapax: ',len(hapaxes))
+    print('-------')
+    print('wordcloud de palabras sin stopwords y stemizado clase: ', i)
+    texto_clase_st_wc = WordCloud(background_color='black', max_words=len(txt_clase_st), stopwords=sw_st)
+    texto_clase_st_wc.generate(txt_clase_st)
+
+    fig, ax = plt.subplots(figsize=(10,10))
+    ax.imshow(texto_clase_st_wc)
+    ax.axis('off')
+    plt.show()
+# %%
+#df3[df3['n_comision']==4]
+dicc_comisiones
+#data.groupby(['n_comision']).size()
+# %%
+'###### analizamos las palabras de las comisiones'
+total_comisiones = df3['n_comision'].unique()
+for i in total_comisiones:
+    print('##########-------------##############')
+    print('Comision: ',dicc_comisiones[i])
+    df_comision = df3[df3['n_comision']==i]
+    
+    #texto_comision_sw = df_comision['Texto_tk_sw2'].sum()
+    texto_comision_sw_st = df_comision['Texto_tk_sw_st2'].sum()
+    
+    txt_comision_st= ''
+    for j in texto_comision_sw_st:
+        txt_comision_st=txt_comision_st+' '+j
+    
+    print('-------')
+    tokens = nltk.word_tokenize(txt_comision_st,"spanish")
+    palabras_totales = len(tokens) # calculo el total de palabras del texto
+    palabras_unicas = set(tokens)  # creo objeto set de datos para tener palábras únicas
+    palabras_diferentes = len(palabras_unicas) # calculo el total de palabras diferentes a partir del set de palabras
+    riqueza_lexica = palabras_diferentes/palabras_totales # determino la riqueza léxica
+    print('Total artículos: ',len(df_comision))
+    print('palabras totales:',palabras_totales,'\n palabras diferentes:',
+        palabras_diferentes,'\n riqueza lexica:',riqueza_lexica)
+    print('-------')
+    #nltk.FreqDist(nltk.Text(texto_comision_sw)).plot(20)
+    print('Distribución palabras con mayor frecuencia comision: ',dicc_comisiones[i])
+    texto_nltk_st2 = nltk.Text(texto_comision_sw_st)
+    distribucion = nltk.FreqDist(texto_nltk_st2)
+    distribucion.plot(20)
+    print('-------')
+    print('hapax de la comision: ',dicc_comisiones[i]) 
+    hapaxes = distribucion.hapaxes() # buscamos los hapaxses sobre el objeto nltk de distribución de palabras 
+    for hapax in hapaxes: 
+        print(hapax)
+    print('total palabras hapax: ',len(hapaxes))
+    print('-------')
+    print('wordcloud de palabras sin stopwords y stemizado comision: ', dicc_comisiones[i])
+    texto_comision_st_wc = WordCloud(background_color='black', max_words=len(txt_clase_st), stopwords=sw_st)
+    texto_comision_st_wc.generate(txt_comision_st)
+
+    fig, ax = plt.subplots(figsize=(10,10))
+    ax.imshow(texto_comision_st_wc)
+    ax.axis('off')
+    plt.show()

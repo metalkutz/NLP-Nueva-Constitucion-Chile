@@ -45,9 +45,9 @@ def textotk_palabracorta(lista_tk):
     #texto = " ".join(texto)
     return lista_tk
 
-def quitar_sw(lista_tk):
+def quitar_sw(lista_tk,stopwords):
     #texto = texto.split() # tokenizar
-    lista_tk = [palabra for palabra in lista_tk if palabra not in sw] # stopwords
+    lista_tk = [palabra for palabra in lista_tk if palabra not in stopwords] # stopwords
     #texto = " ".join(texto)
     return lista_tk
 
