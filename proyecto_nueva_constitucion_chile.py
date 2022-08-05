@@ -74,7 +74,9 @@ data.drop(['Cantidad de Comentarios'], axis=1, inplace=True)
 # %%
 'analizamos el texto completo sin limpieza de palabras'
 #juntamos los articulos en 1 solo texto
-texto = data.Texto.sum()
+texto = ''
+for i in data['Texto']:
+    texto=texto+' '+i
 tokens = nltk.word_tokenize(texto,"spanish")
 
 'riqueza lexica 10.7%'
@@ -89,7 +91,7 @@ print('palabras totales',palabras_totales,'\n palabras diferentes',
 # %%
 '#### aplicamos las transformaciones para limpiar y generar tokens'
 df1 = data.copy()
-df1['Texto_limpio']= df1['Texto'].astype(str)
+df1['Texto_limpio']= df1['Texto']
 df1['Texto_limpio'] = df1['Texto'].apply(lambda texto: texto_limpio(texto)) 
 df1["Texto_limpio_tk"] = df1["Texto_limpio"].apply(lambda x:nltk.word_tokenize(x,"spanish"))
 # df1["Texto_tk"] = df1["Texto_tk"].apply(lambda x: list(map(str.lower, x)))
@@ -377,7 +379,6 @@ df3["Texto_tk_sw2"] = df3["Texto_tk_sw"].apply(lambda x: quitar_sw(x,sw_extras))
 df3["Texto_tk_sw_st2"] = df3["Texto_tk_sw_st"].apply(lambda x: quitar_sw(x,sw_st))
 
 df_kmeans = df3.copy()
-df_kmeans.drop(['Aprobada en','Cantidad de Comentarios','URL','clase-dbscan','clase-jerarquico'], axis=1, inplace=True)
 
 df_kmeans["Texto_tk_sw2"] = df_kmeans["Texto_tk_sw"].apply(lambda x: quitar_sw(x,sw_extras))
 df_kmeans["Texto_tk_sw_st2"] = df_kmeans["Texto_tk_sw_st"].apply(lambda x: quitar_sw(x,sw_st))
